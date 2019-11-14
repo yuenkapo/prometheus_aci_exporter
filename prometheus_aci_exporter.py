@@ -11,7 +11,13 @@ from prometheus_client.core import CounterMetricFamily, GaugeMetricFamily, Metri
 import requests
 import yaml
 
-
+requests.packages.urllib3.disable_warnings()
+requests.packages.urllib3.util.ssl_.DEFAULT_CIPHERS += 'HIGH:!DH:!aNULL'
+try:
+    requests.packages.urllib3.contrib.pyopenssl.DEFAULT_SSL_CIPHER_LIST += 'HIGH:!DH:!aNULL'
+except AttributeError:
+    # no pyopenssl support used / needed / available
+    pass
 
 RealNumber = Union[int, float]
 JsonType = Union[None, str, int, float, bool, List['JsonType'], Dict[str, 'JsonType']]
