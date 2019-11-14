@@ -9,8 +9,10 @@ import urllib.parse as up
 from prometheus_client import REGISTRY, start_http_server
 from prometheus_client.core import CounterMetricFamily, GaugeMetricFamily, Metric
 import requests
+from requests import adapters
 import yaml
-
+import ssl
+from urllib3 import poolmanager
 
 RealNumber = Union[int, float]
 JsonType = Union[None, str, int, float, bool, List['JsonType'], Dict[str, 'JsonType']]
@@ -24,6 +26,23 @@ METRIC_TYPES = {
     'counter': CounterMetricFamily,
     # TODO: histogram and summary
 }
+
+class TLSAdapter(adapters.HTTPAdapter):
+
+    def init_poolmanager(self, connections, maxsize, block=False):
+        """Create and initialize the urllib3 PoolManager."""
+        ctx = ssl.create_default_context()
+        ctx.set_ciphers('DEFAULT@SECLEVEL=1')
+        self.poolmanager = poolmanager.PoolManager(
+                num_pools=connections,
+                maxsize=maxsize,
+                block=block,
+                ssl_version=ssl.PROTOCOL_TLS,
+                ssl_context=ctx)
+
+session = requests.session()
+session.mount('https://', TLSAdapter())
+session.get(TARGET)
 
 
 class AciSession(object):
