@@ -5,7 +5,7 @@ import re
 import signal
 import time
 from typing import Any, Callable, Dict, Iterable, List, Optional, Pattern, Union
-import urllib3.parse as up
+import urllib.parse as up
 from prometheus_client import REGISTRY, start_http_server
 from prometheus_client.core import CounterMetricFamily, GaugeMetricFamily, Metric
 import requests
@@ -54,7 +54,7 @@ class AciSession(object):
             f"https://{self.controller}/api/aaaLogin.json",
             json=auth_payload,
             timeout=self.timeout,
-            verify=self.tls_verify
+            verify=False
         )
         response.raise_for_status()
 
@@ -78,7 +78,7 @@ class AciSession(object):
             json=logout_payload,
             cookies={APIC_COOKIE_NAME: self.auth_token},
             timeout=self.timeout,
-            verify=self.tls_verify,
+            verify=False
         )
         response.raise_for_status()
 
@@ -103,7 +103,7 @@ class AciSession(object):
             params=query_options,
             cookies={APIC_COOKIE_NAME: self.auth_token},
             timeout=self.timeout,
-            verify=self.tls_verify
+            verify=False
         )
         response.raise_for_status()
 
