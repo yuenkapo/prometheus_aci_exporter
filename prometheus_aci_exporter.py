@@ -247,7 +247,7 @@ class AciCollector(object):
             for values, labels in all_values_labels:
                 for key, value in values.items():
                     metric_object = metric_definitions[key]
-                    metric_object.add_metric(labels.values(), str(value))
+                    metric_object.add_metric(labels.values(), float(value))
 
             for metric_object in metric_definitions.values():
                 yield metric_object
